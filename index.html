@@ -105,6 +105,12 @@
         }
         footer a{color:var(--accent);margin:0 8px;text-decoration:none;}
     </style>
+
+    <!-- Memos 额外样式 -->
+    <link rel="stylesheet" href="https://static.314926.xyz/css/memos/style.css">
+    <link rel="stylesheet" href="https://memos.314926.xyz/memos/highlight.github.min.css">
+    <link rel="stylesheet" href="https://static.314926.xyz/css/custom/memos-custom.css">
+    <link rel="stylesheet" href="https://static.314926.xyz/css/custom/app.css">
 </head>
 
 <body>
@@ -140,10 +146,44 @@
             </div>
         </section>
 
-        <!-- Memos（已替换最新代码） -->
+        <!-- Memos（独立页面写法，完全替换） -->
         <section id="page-memos">
-            <h1 style="text-align:center;margin-bottom:20px;">Memos 动态</h1>
-            <div id="memoList" class="loading">加载中...</div>
+            <main id="main" class="container py-10">
+                <div id="memos" class="memos"></div>
+            </main>
+
+            <!-- 全局配置 -->
+            <script>
+                window.memos = {
+                    host: 'https://memos.050815.xyz',
+                    limit: '10',
+                    creatorId: '1',
+                    domId: '#memos',
+                    username: 'kemiao',
+                    name: '克喵爱吃卤面',
+                };
+            </script>
+
+            <!-- 外部脚本（按依赖顺序） -->
+            <script src="https://memos.314926.xyz/memos/lazyload.min.js"></script>
+            <script src="https://memos.314926.xyz/memos/marked.min.js"></script>
+            <script src="https://memos.314926.xyz/memos/view-image.min.js"></script>
+            <script src="https://memos.314926.xyz/memos/moment.min.js"></script>
+            <script src="https://memos.314926.xyz/memos/moment.twitter.js"></script>
+            <script src="https://memos.314926.xyz/memos/highlight.min.js"></script>
+            <script src="https://static.314926.xyz/js/memos/main.js"></script>
+
+            <!-- 初始化脚本 -->
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        if (typeof hljs !== 'undefined') hljs.highlightAll();
+                        document.querySelectorAll('.memo').forEach(el => {
+                            el.classList.add('bg-white', 'dark:bg-gray-800', 'p-4', 'rounded-lg');
+                        });
+                    }, 500);
+                });
+            </script>
         </section>
 
         <!-- 友链 -->
@@ -225,49 +265,6 @@
             document.body.appendChild(js);
             window.fclResources={css,js};
         })();
-
-        /* ---------- Memos（已替换最新代码） ---------- */
-        // ========== 仅修改下面一行 ==========
-        const API_BASE = 'https://memos.050815.xyz'; // 换成你自己的实例
-        // =====================================
-        const listEl = document.getElementById('memoList');
-
-        async function loadMemos() {
-            try {
-                const res = await fetch(`${API_BASE}/api/v1/memo?limit=10&visibility=PUBLIC`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const memos = await res.json();
-                if (!memos.length) { listEl.innerHTML = '<div class="error">暂无公开内容</div>'; return; }
-
-                listEl.innerHTML = memos.map(memo => `
-                    <div class="memo-card">
-                        <div class="memo-content">${escapeHtml(memo.content)}</div>
-                        <div class="memo-time">${formatTime(memo.createdTs)}</div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                listEl.innerHTML = `<div class="error">加载失败：${error.message}</div>`;
-            }
-        }
-        function formatTime(timestamp) {
-            return new Date(timestamp * 1000).toLocaleString('zh-CN', {
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit'
-            });
-        }
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        // 点击 Memos 标签页时加载一次
-        document.querySelector('.nav-link[data-page="memos"]').addEventListener('click', () => {
-            if (!window.memosLoaded) { loadMemos(); window.memosLoaded = true; }
-        });
 
         /* ---------- 友链数据 ---------- */
         const friendsData=[
