@@ -234,7 +234,7 @@
 
         async function loadMemos() {
             try {
-                const res = await fetch(`${API_BASE}/api/v1/memo?limit=30&visibility=PUBLIC`);
+                const res = await fetch(`${API_BASE}/api/v1/memo?limit=30&visibility=public`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const memos = await res.json();
                 if (!memos.length) { listEl.innerHTML = '<div class="error">暂无公开内容</div>'; return; }
