@@ -1,170 +1,261 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>友链朋友圈动态 | 克喵的社交空间</title>
-    <!-- 样式表整合 -->
-    <link href="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/css/style.css" rel="stylesheet" type="text/css">
-    <link href="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/css/highlight.github.min.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Du's Garden</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- 基础设计系统 -->
     <style>
-        /* 自定义布局增强 */
-        body {
-            background-color: #f8fafc;
-            color: #1e293b;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            padding: 0 1rem;
+        :root{
+            --bg:#ffffff;
+            --bg-soft:#f7f7f7;
+            --text:#222;
+            --text-soft:#666;
+            --border:#e5e5e5;
+            --accent:#0066ff;
+            --radius:12px;
+            --shadow:0 4px 20px rgba(0,0,0,.05);
+            --transition:.3s ease;
         }
-        .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 20px;
+        [data-theme="dark"]{
+            --bg:#1e1e1e;
+            --bg-soft:#2a2a2a;
+            --text:#e5e5e5;
+            --text-soft:#aaa;
+            --border:#333;
+            --accent:#4f8cff;
+            --shadow:0 4px 20px rgba(0,0,0,.25);
         }
-        .memos-header {
-            text-align: center;
-            margin-bottom: 2rem;
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+            background:var(--bg);color:var(--text);
+            transition:background var(--transition),color var(--transition);
+            display:flex;flex-direction:column;min-height:100vh;
         }
-        .memos-header h1 {
-            font-size: 2.2rem;
-            color: #2563eb;
+        header{
+            background:var(--bg-soft);border-bottom:1px solid var(--border);
+            padding:12px 24px;position:sticky;top:0;z-index:1000;
         }
-        .memo-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
+        nav{display:flex;gap:24px;align-items:center;font-weight:600;}
+        nav a{color:var(--text-soft);text-decoration:none;font-size:14px;}
+        nav a.active{color:var(--accent);}
+        main{flex:1;max-width:800px;width:100%;margin:40px auto;padding:0 20px;}
+        section{display:none;}
+        section.active{display:block;animation:fadeIn .4s;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+        /* 友链卡片 */
+        .friend-grid{display:grid;gap:20px;}
+        @media(min-width:600px){.friend-grid{grid-template-columns:repeat(2,1fr);}}
+        @media(min-width:900px){.friend-grid{grid-template-columns:repeat(4,1fr);}}
+        .friend-card{
+            border:1px solid var(--border);border-radius:var(--radius);
+            padding:20px;background:var(--bg-soft);display:flex;gap:12px;align-items:center;
+            transition:transform var(--transition),box-shadow var(--transition);
         }
-        .memo-content {
-            margin-bottom: 1rem;
-            line-height: 1.7;
+        .friend-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+        .friend-card img{width:48px;height:48px;border-radius:50%;object-fit:cover;}
+        .friend-info{flex:1;display:flex;flex-direction:column;}
+        .friend-name{font-weight:600;color:var(--accent);}
+        .friend-desc{font-size:13px;color:var(--text-soft);}
+        .friend-url{font-size:12px;color:var(--text-soft);}
+        /* 代码块 */
+        pre{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);
+            padding:16px;overflow:auto;font-size:14px;}
+        /* 浮动主题按钮 */
+        .theme-float{
+            position:fixed;bottom:24px;right:24px;
+            width:48px;height:48px;border-radius:50%;
+            background:var(--accent);color:#fff;border:none;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;font-size:20px;
+            box-shadow:var(--shadow);transition:transform var(--transition);
         }
-        .memo-content img {
-            max-width: 100%;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 0.8rem;
-            transition: transform 0.3s ease;
+        .theme-float:hover{transform:scale(1.1);}
+        /* 页脚 */
+        footer{
+            text-align:center;font-size:13px;color:var(--text-soft);
+            padding:40px 20px;border-top:1px solid var(--border);
         }
-        .memo-content img:hover {
-            transform: scale(1.02);
-        }
-        .memo-meta {
-            display: flex;
-            justify-content: space-between;
-            color: #64748b;
-            font-size: 0.9rem;
-            border-top: 1px dashed #e2e8f0;
-            padding-top: 0.8rem;
-        }
-        .memo-author {
-            font-weight: 600;
-            color: #2563eb;
-        }
-        .image-notice {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin: 1rem 0;
-            font-style: italic;
-        }
-        pre {
-            border-radius: 8px;
-            padding: 1rem;
-            overflow-x: auto;
-            background: #0f172a !important;
-            margin: 1rem 0;
-        }
+        footer a{color:var(--accent);margin:0 8px;text-decoration:none;}
     </style>
 </head>
+
 <body>
-    <!-- 导航Banner（保留原始结构） -->
-    <div class="banner">
-        <div class="banner-container">
-            <div class="logo">
-                <div class="logo-icon">💬</div>
-                <div class="logo-text">克喵的社交空间</div>
+    <!-- 顶部导航 -->
+    <header>
+        <nav>
+            <a href="#" class="nav-link active" data-page="home">首页</a>
+            <a href="#" class="nav-link" data-page="memos">Memos</a>
+            <a href="#" class="nav-link" data-page="friends">友链</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 首页 / 朋友圈 -->
+        <section id="page-home" class="active">
+            <div id="friend-circle-lite-root"></div>
+            <div class="giscus-container">
+                <script src="https://giscus.app/client.js"
+                        data-repo="your-username/your-repo"
+                        data-repo-id="R_kgDO..."
+                        data-category="General"
+                        data-category-id="DIC_kwDO..."
+                        data-mapping="pathname"
+                        data-strict="0"
+                        data-reactions-enabled="1"
+                        data-emit-metadata="0"
+                        data-input-position="bottom"
+                        data-theme="light"
+                        data-lang="zh-CN"
+                        crossorigin="anonymous"
+                        async>
+                </script>
             </div>
-            <div class="nav-buttons">
-                <a href="memos.html" class="nav-button">
-                    <span>📝</span> 朋友圈
-                </a>
-                <a href="links.html" class="nav-button">
-                    <span>🔗</span> 友情链接
-                </a>
-                <a href="friendcircle.html" class="nav-button active">
-                    <span>🔄</span> 友链动态
-                </a>
-                <a href="index.html" class="nav-button">
-                    <span>🏠</span> 首页
-                </a>
-                <button class="theme-toggle" id="theme-toggle"></button>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- 动态内容区域 -->
-    <div class="memos-header">
-        <h1>友链朋友圈动态</h1>
-        <p>实时聚合互链好友的最新动态与技术分享</p>
-    </div>
+        <!-- Memos -->
+        <section id="page-memos">
+            <p style="margin-bottom:12px;font-size:14px;color:var(--text-soft)">点图片可放大</p>
+            <div id="memos" class="memos"></div>
+        </section>
 
-    <div class="image-notice">{% quot 点图片可放大! %}</div>
+        <!-- 友链 -->
+        <section id="page-friends">
+            <h2 style="margin-bottom:20px;">小伙伴们</h2>
+            <div class="friend-grid" id="friends-show"></div>
 
-    <section id="main" class="container">
-        <div id="memos" class="memos">
-            <!-- 动态内容由JavaScript渲染 -->
-            <div class="loading-notice">
-                <p>正在加载友链动态...</p>
-            </div>
-        </div>
-    </section>
+            <h3 style="margin:40px 0 12px;">申请须知</h3>
+            <ul style="padding-left:20px;font-size:15px;line-height:1.8;color:var(--text-soft);">
+                <li>站点可正常访问，内容健康</li>
+                <li>半年内无失联，更新规律</li>
+                <li>互换友链后请保持至少一年</li>
+            </ul>
 
-    <!-- JavaScript配置与库加载 -->
-    <script type="text/javascript">
-        var memos = {
-            host: 'https://s.dusays.com/',
-            limit: '10',
-            creatorId: '1',
-            domId: '#memos',
-            username: 'penn',
-            name: 'Teacher Du',
-        }
-    </script>
-    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/lazyload.min.js?v=17.8.3"></script>
-    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/marked.min.js?v=11.1.1"></script>
-    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/view-image.min.js?v=2.0.2"></script>
-    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/moment.min.js?v=2.30.1"></script>
-    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/moment.twitter.js"></script>
-    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/highlight.min.js?v=11.9.0"></script>
-    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/memo.js"></script>
-    
+            <h3 style="margin:40px 0 12px;">我的信息</h3>
+            <pre><code>{
+  "name": "Du's Garden",
+  "desc": "前端与碎碎念",
+  "url": "https://example.com",
+  "avatar": "https://example.com/avatar.jpg"
+}</code></pre>
+        </section>
+    </main>
+
+    <!-- 浮动主题按钮 -->
+    <button class="theme-float" onclick="toggleTheme()" title="切换主题">🌗</button>
+
+    <!-- 页脚 -->
+    <footer>
+        <a href="/rss.xml">RSS</a> ·
+        <a href="https://github.com/you" target="_blank">GitHub</a> ·
+        <a href="mailto:me@example.com">Email</a><br/>
+        © 2025 Du's Garden · 粤ICP备xxxxxxxx号-1
+    </footer>
+
+    <!-- 逻辑脚本 -->
     <script>
-        // 初始化代码高亮
-        hljs.highlightAll();
-        
-        // 暗色模式切换功能
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggle = document.getElementById('theme-toggle');
-            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            const currentTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
-            
-            if (currentTheme === 'dark') document.body.classList.add('dark-mode');
-            
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-mode');
-                localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        /* ---------- 路由切换 ---------- */
+        const links  = document.querySelectorAll('.nav-link');
+        const pages  = document.querySelectorAll('section');
+        links.forEach(el=>el.addEventListener('click', e=>{
+            e.preventDefault();
+            const id = el.dataset.page;
+            links.forEach(l=>l.classList.toggle('active', l===el));
+            pages.forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
+        }));
+
+        /* ---------- 主题 ---------- */
+        function toggleTheme(){
+            const html = document.documentElement;
+            const dark = html.getAttribute('data-theme')==='dark';
+            const next = dark?'light':'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            /* giscus 同步 */
+            const g = document.querySelector('iframe.giscus-frame');
+            if(g) g.contentWindow.postMessage({giscus:{setConfig:{theme:next}}}, 'https://giscus.app');
+        }
+        (()=>{
+            const t = localStorage.getItem('theme')||'light';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+
+        /* ---------- Friend Circle Lite ---------- */
+        (()=>{
+            if(typeof window==='undefined')return;
+            window.UserConfig={
+                private_api_url:'https://fc.314926.xyz/',
+                page_turning_number:24,
+                error_img:'https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg'
+            };
+            const css=document.createElement('link');
+            css.rel='stylesheet';
+            css.href='https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.css';
+            document.head.appendChild(css);
+            const js=document.createElement('script');
+            js.src='https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.js';
+            js.onload=()=>console.warn('Friend Circle Lite loaded');
+            document.body.appendChild(js);
+            window.fclResources={css,js};
+        })();
+
+        /* ---------- Memos ---------- */
+        (()=>{
+            const css1 = document.createElement('link');
+            css1.rel='stylesheet';
+            css1.href='https://static.314926.xyz/css/memos/style.css';
+            document.head.appendChild(css1);
+            const css2 = document.createElement('link');
+            css2.rel='stylesheet';
+            css2.href='https://memos.314926.xyz/memos/highlight.github.min.css';
+            document.head.appendChild(css2);
+
+            window.memos={
+                host:'https://memos.050815.xy',
+                limit:'10',
+                creatorId:'1',
+                domId:'#memos',
+                username:'kemiao',
+                name:'克喵爱吃卤面'
+            };
+
+            const deps=[
+                'https://memos.314926.xyz/memos/lazyload.min.js',
+                'https://memos.314926.xyz/memos/marked.min.js',
+                'https://memos.314926.xyz/memos/view-image.min.js',
+                'https://memos.314926.xyz/memos/moment.min.js',
+                'https://memos.314926.xyz/memos/moment.twitter.js',
+                'https://memos.314926.xyz/memos/highlight.min.js',
+                'https://static.314926.xyz/js/memos/main.js'
+            ];
+            deps.forEach(src=>{
+                const s=document.createElement('script');
+                s.src=src;
+                document.body.appendChild(s);
             });
-        });
-        
-        // 图片查看增强
-        document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'IMG' && e.target.closest('.memo-content')) {
-                window.viewImage(e.target.src);
-            }
-        });
+        })();
+
+        /* ---------- 友链数据 ---------- */
+        const friendsData=[
+            {name:'Teacher Du',desc:'写代码的教书匠',url:'https://s.dusays.com',avatar:'https://s.dusays.com/logo.jpg'},
+            {name:'APP喵',desc:'每日分享有趣App',url:'https://appmiu.com',avatar:'https://appmiu.com/favicon.ico'},
+            {name:'张洪Heo',desc:'设计与前端',url:'https://blog.zhheo.com',avatar:'https://blog.zhheo.com/avatar.png'}
+        ];
+        const html=friendsData.map(f=>`
+            <a class="friend-card" href="${f.url}" target="_blank">
+                <img src="${f.avatar}" alt="${f.name}">
+                <div class="friend-info">
+                    <div class="friend-name">${f.name}</div>
+                    <div class="friend-desc">${f.desc}</div>
+                    <div class="friend-url">${f.url}</div>
+                </div>
+            </a>
+        `).join('');
+        document.getElementById('friends-show').innerHTML=html;
     </script>
 </body>
 </html>
