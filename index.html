@@ -48,6 +48,14 @@
         section{display:none;}
         section.active{display:block;animation:fadeIn .4s;}
         @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+        /* Memos 卡片 */
+        .memo-card{
+            border:1px solid var(--border);border-radius:var(--radius);
+            padding:16px;margin-bottom:12px;background:var(--bg-soft);
+            box-shadow:var(--shadow);white-space:pre-wrap;word-break:break-word;
+            line-height:1.6;
+        }
+        .memo-time{color:var(--text-soft);font-size:.85em;margin-top:8px;}
         /* 友链卡片 */
         .friend-grid{display:grid;gap:20px;}
         @media(min-width:600px){.friend-grid{grid-template-columns:repeat(2,1fr);}}
@@ -62,7 +70,6 @@
         .friend-info{flex:1;display:flex;flex-direction:column;}
         .friend-name{font-weight:600;color:var(--accent);}
         .friend-desc{font-size:13px;color:var(--text-soft);}
-        .friend-url{font-size:12px;color:var(--text-soft);}
         /* 代码块 */
         pre{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);
             padding:16px;overflow:auto;font-size:14px;}
@@ -117,10 +124,10 @@
             </div>
         </section>
 
-        <!-- Memos -->
+        <!-- Memos（新代码） -->
         <section id="page-memos">
-            <p style="margin-bottom:12px;font-size:14px;color:var(--text-soft)">点图片可放大</p>
-            <div id="memos" class="memos"></div>
+            <h2 style="margin-bottom:20px;">📒 我的 Memos 动态</h2>
+            <div id="memos-container">加载中…</div>
         </section>
 
         <!-- 友链 -->
@@ -203,41 +210,48 @@
             window.fclResources={css,js};
         })();
 
-        /* ---------- Memos ---------- */
-        (()=>{
-            const css1 = document.createElement('link');
-            css1.rel='stylesheet';
-            css1.href='https://static.314926.xyz/css/memos/style.css';
-            document.head.appendChild(css1);
-            const css2 = document.createElement('link');
-            css2.rel='stylesheet';
-            css2.href='https://memos.314926.xyz/memos/highlight.github.min.css';
-            document.head.appendChild(css2);
+        /* ---------- Memos（新代码） ---------- */
+        const MEMOS_API_URL = 'https://memos.050815.xyz/api/v1/memo?limit=10&rowStatus=NORMAL';
+        const ACCESS_TOKEN  = '';
 
-            window.memos={
-                host:'https://memos.050815.xyz',
-                limit:'10',
-                creatorId:'1',
-                domId:'#memos',
-                username:'kemiao',
-                name:'克喵爱吃卤面'
-            };
+        async function fetchMemos() {
+            const container = document.getElementById('memos-container');
+            try {
+                const res = await fetch(MEMOS_API_URL, {
+                    headers: ACCESS_TOKEN ? { 'Authorization': `Bearer ${ACCESS_TOKEN}` } : {}
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status} – ${res.statusText}`);
+                const list = await res.json();
+                if (!Array.isArray(list)) throw new Error('返回格式不正确');
 
-            const deps=[
-                'https://memos.314926.xyz/memos/lazyload.min.js',
-                'https://memos.314926.xyz/memos/marked.min.js',
-                'https://memos.314926.xyz/memos/view-image.min.js',
-                'https://memos.314926.xyz/memos/moment.min.js',
-                'https://memos.314926.xyz/memos/moment.twitter.js',
-                'https://memos.314926.xyz/memos/highlight.min.js',
-                'https://static.314926.xyz/js/memos/main.js'
-            ];
-            deps.forEach(src=>{
-                const s=document.createElement('script');
-                s.src=src;
-                document.body.appendChild(s);
-            });
-        })();
+                container.innerHTML = '';
+                list.forEach(memo=>{
+                    const div = document.createElement('div');
+                    div.className = 'memo-card';
+                    div.innerHTML = `
+                        <div class="memo-content">${escapeHtml(memo.content)}</div>
+                        <div class="memo-time">${formatTime(memo.createdTs)}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div style="color:#e74c3c">加载失败：${err.message}<br/>请检查网络或 API 地址。</div>`;
+            }
+        }
+
+        function escapeHtml(str){
+            const map = { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' };
+            return str.replace(/[&<>"']/g, s => map[s]);
+        }
+        function formatTime(ts){
+            return new Date(ts * 1000).toLocaleString('zh-CN');
+        }
+
+        /* 点击 Memos 标签页时加载一次 */
+        document.querySelector('.nav-link[data-page="memos"]').addEventListener('click', () => {
+            if (!window.memosLoaded) { fetchMemos(); window.memosLoaded = true; }
+        });
 
         /* ---------- 友链数据 ---------- */
         const friendsData=[
@@ -245,17 +259,16 @@
             {name:'APP喵',desc:'每日分享有趣App',url:'https://appmiu.com',avatar:'https://appmiu.com/favicon.ico'},
             {name:'张洪Heo',desc:'设计与前端',url:'https://blog.zhheo.com',avatar:'https://blog.zhheo.com/avatar.png'}
         ];
-        const html=friendsData.map(f=>`
+        const friendsHtml=friendsData.map(f=>`
             <a class="friend-card" href="${f.url}" target="_blank">
                 <img src="${f.avatar}" alt="${f.name}">
                 <div class="friend-info">
                     <div class="friend-name">${f.name}</div>
                     <div class="friend-desc">${f.desc}</div>
-                    <div class="friend-url">${f.url}</div>
                 </div>
             </a>
         `).join('');
-        document.getElementById('friends-show').innerHTML=html;
+        document.getElementById('friends-show').innerHTML=friendsHtml;
     </script>
 </body>
 </html>
