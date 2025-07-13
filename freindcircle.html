@@ -3,261 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>友链动态 | 克喵的社交空间</title>
+    <title>友链朋友圈动态 | 克喵的社交空间</title>
+    <!-- 样式表整合 -->
+    <link href="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/css/style.css" rel="stylesheet" type="text/css">
+    <link href="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/css/highlight.github.min.css" rel="stylesheet" type="text/css">
     <style>
-        :root {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --border-color: #e2e8f0;
-            --accent-color: #38bdf8;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --code-bg: #f1f5f9;
-        }
-
-        .dark-mode {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #e2e8f0;
-            --border-color: #334155;
-            --accent-color: #7dd3fc;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            --code-bg: #1e293b;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-        }
-
+        /* 自定义布局增强 */
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #f8fafc;
+            color: #1e293b;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.6;
-            min-height: 100vh;
             padding: 0 1rem;
         }
-
-        /* 导航Banner */
-        .banner {
-            background-color: #0f172a;
-            color: white;
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
         }
-        
-        .banner-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
+        .memos-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .memos-header h1 {
+            font-size: 2.2rem;
+            color: #2563eb;
         }
-        
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background-color: #38bdf8;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .nav-buttons {
-            display: flex;
-            gap: 1.5rem;
-        }
-        
-        .nav-button {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-        
-        .nav-button:hover {
-            background: #38bdf8;
-            transform: translateY(-2px);
-        }
-        
-        .nav-button.active {
-            background: #38bdf8;
-            box-shadow: 0 4px 10px rgba(56, 189, 248, 0.3);
-        }
-        
-        .theme-toggle {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            width: 50px;
-            height: 30px;
-            border-radius: 15px;
-            position: relative;
-            cursor: pointer;
-            margin-left: 1.5rem;
-        }
-        
-        .theme-toggle::before {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
+        .memo-card {
             background: white;
-            border-radius: 50%;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .memo-content {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        .memo-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 0.8rem;
             transition: transform 0.3s ease;
         }
-        
-        .dark-mode .theme-toggle::before {
-            transform: translateX(20px);
+        .memo-content img:hover {
+            transform: scale(1.02);
         }
-
-        header {
-            max-width: 800px;
-            margin: 4rem auto 2rem;
-            text-align: center;
-            position: relative;
-        }
-
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--accent-color);
-            margin: 0 auto 1.5rem;
-            display: block;
-            background-color: #e8f4fe;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-        }
-
-        .bio {
-            font-size: 1.1rem;
-            max-width: 500px;
-            margin: 0 auto 2rem;
+        .memo-meta {
+            display: flex;
+            justify-content: space-between;
             color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 0.8rem;
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto 3rem;
-            padding-bottom: 3rem;
+        .memo-author {
+            font-weight: 600;
+            color: #2563eb;
         }
-
-        .friend-circle-container {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            min-height: 500px;
-            position: relative;
-        }
-
-        .loading-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .image-notice {
             text-align: center;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin: 1rem 0;
+            font-style: italic;
         }
-
-        .loader {
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--accent-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                margin-top: 3rem;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .avatar {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .banner-container {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            .nav-buttons {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .nav-button {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-
-            .friend-circle-container {
-                padding: 1.5rem;
-            }
+        pre {
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            background: #0f172a !important;
+            margin: 1rem 0;
         }
     </style>
 </head>
 <body>
-    <!-- 导航Banner -->
+    <!-- 导航Banner（保留原始结构） -->
     <div class="banner">
         <div class="banner-container">
             <div class="logo">
                 <div class="logo-icon">💬</div>
                 <div class="logo-text">克喵的社交空间</div>
             </div>
-            
             <div class="nav-buttons">
                 <a href="memos.html" class="nav-button">
                     <span>📝</span> 朋友圈
@@ -276,125 +105,66 @@
         </div>
     </div>
 
-    <header>
-        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='40' r='20' fill='%2338bdf8'/%3E%3Ccircle cx='50' cy='100' r='30' fill='%2338bdf8'/%3E%3C/svg%3E" alt="用户头像" class="avatar">
-        <h1>友链动态</h1>
-        <p class="bio">实时追踪友情链接的最新动态与更新</p>
-    </header>
+    <!-- 动态内容区域 -->
+    <div class="memos-header">
+        <h1>友链朋友圈动态</h1>
+        <p>实时聚合互链好友的最新动态与技术分享</p>
+    </div>
 
-    <main class="container">
-        <div class="friend-circle-container">
-            <div class="loading-indicator">
-                <div class="loader"></div>
+    <div class="image-notice">{% quot 点图片可放大! %}</div>
+
+    <section id="main" class="container">
+        <div id="memos" class="memos">
+            <!-- 动态内容由JavaScript渲染 -->
+            <div class="loading-notice">
                 <p>正在加载友链动态...</p>
             </div>
         </div>
-    </main>
+    </section>
 
+    <!-- JavaScript配置与库加载 -->
+    <script type="text/javascript">
+        var memos = {
+            host: 'https://s.dusays.com/',
+            limit: '10',
+            creatorId: '1',
+            domId: '#memos',
+            username: 'penn',
+            name: 'Teacher Du',
+        }
+    </script>
+    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/lazyload.min.js?v=17.8.3"></script>
+    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/marked.min.js?v=11.1.1"></script>
+    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/view-image.min.js?v=2.0.2"></script>
+    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/moment.min.js?v=2.30.1"></script>
+    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/moment.twitter.js"></script>
+    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/highlight.min.js?v=11.9.0"></script>
+    <script type="text/javascript" src="https://jsd.onmicrosoft.cn/npm/penndu@17.0.0/memos/js/memo.js"></script>
+    
     <script>
-        // 页面初始化和主题设置
+        // 初始化代码高亮
+        hljs.highlightAll();
+        
+        // 暗色模式切换功能
         document.addEventListener('DOMContentLoaded', function() {
-            // 主题切换功能
             const themeToggle = document.getElementById('theme-toggle');
             const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            const currentTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
             
-            // 从本地存储加载主题设置
-            const currentTheme = localStorage.getItem('theme');
-            if (currentTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                themeToggle.checked = true;
-            } else if (currentTheme === 'light') {
-                document.body.classList.remove('dark-mode');
-                themeToggle.checked = false;
-            } else if (prefersDarkScheme.matches) {
-                document.body.classList.add('dark-mode');
-                themeToggle.checked = true;
-            }
+            if (currentTheme === 'dark') document.body.classList.add('dark-mode');
             
-            // 监听主题切换
             themeToggle.addEventListener('click', function() {
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-                
-                // 重新加载Friend Circle Lite以应用主题变化
-                reloadFriendCircle();
             });
-            
-            // 初始化Friend Circle Lite
-            initFriendCircle();
         });
-
-        // 初始化Friend Circle Lite的动态加载和清理逻辑
-        function initFriendCircle() {
-            // 设置Friend Circle Lite的配置
-            window.UserConfig = {
-                private_api_url: 'https://fc.314926.xyz/',
-                page_turning_number: 24,
-                error_img: 'https://pic.imgdb.cn/item/6695daa4d9c307b7e953ee3d.jpg',
-            };
-            
-            // 加载Friend Circle Lite的CSS
-            const cssLink = document.createElement('link');
-            cssLink.rel = 'stylesheet';
-            cssLink.href = 'https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.css';
-            document.head.appendChild(cssLink);
-            
-            // 加载Friend Circle Lite的JS
-            const script = document.createElement('script');
-            script.src = 'https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.js';
-            script.onload = () => {
-                console.log('Friend Circle Lite加载成功');
-                // 隐藏加载指示器
-                const loadingIndicator = document.querySelector('.loading-indicator');
-                if (loadingIndicator) loadingIndicator.style.display = 'none';
-            };
-            script.onerror = () => {
-                console.error('Friend Circle Lite加载失败');
-                const loadingIndicator = document.querySelector('.loading-indicator');
-                if (loadingIndicator) {
-                    loadingIndicator.innerHTML = '<p>⚠️ 友链动态加载失败，请刷新重试</p>';
-                }
-            };
-            document.body.appendChild(script);
-            
-            // 保存资源引用用于卸载
-            window.fclResources = { cssLink, script };
-            
-            // 添加页面卸载事件监听器
-            window.addEventListener('beforeunload', cleanupFriendCircle);
-        }
         
-        // 重新加载Friend Circle Lite
-        function reloadFriendCircle() {
-            cleanupFriendCircle();
-            initFriendCircle();
-        }
-        
-        // 清理Friend Circle Lite资源
-        function cleanupFriendCircle() {
-            // 清理资源
-            if (window.fclResources) {
-                if (document.head.contains(window.fclResources.cssLink)) {
-                    document.head.removeChild(window.fclResources.cssLink);
-                }
-                if (document.body.contains(window.fclResources.script)) {
-                    document.body.removeChild(window.fclResources.script);
-                }
-                delete window.fclResources;
+        // 图片查看增强
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'IMG' && e.target.closest('.memo-content')) {
+                window.viewImage(e.target.src);
             }
-            
-            // 清理配置
-            if (window.UserConfig) {
-                delete window.UserConfig;
-            }
-            
-            // 清理DOM内容
-            const root = document.getElementById('friend-circle-lite-root');
-            if (root) root.innerHTML = '';
-            
-            // 移除页面卸载事件监听器
-            window.removeEventListener('beforeunload', cleanupFriendCircle);
-        }
+        });
     </script>
 </body>
 </html>
