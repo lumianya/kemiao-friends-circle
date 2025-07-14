@@ -8,102 +8,133 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- 基础设计系统（含 Memos 卡片样式） -->
+    <!-- 设计系统 -->
     <style>
         :root{
             --bg:#ffffff;
             --bg-soft:#f7f7f7;
+            --bg-hover:#f0f0f0;
             --text:#222;
             --text-soft:#666;
             --border:#e5e5e5;
             --accent:#0066ff;
-            --radius:12px;
-            --shadow:0 4px 20px rgba(0,0,0,.05);
-            --transition:.3s ease;
+            --radius:14px;
+            --shadow:0 6px 24px rgba(0,0,0,.06);
+            --transition:.35s cubic-bezier(.4,0,.2,1);
         }
         [data-theme="dark"]{
             --bg:#1e1e1e;
-            --bg-soft:#2a2a2a;
+            --bg-soft:#252525;
+            --bg-hover:#2f2f2f;
             --text:#e5e5e5;
             --text-soft:#aaa;
             --border:#333;
             --accent:#4f8cff;
-            --shadow:0 4px 20px rgba(0,0,0,.25);
+            --shadow:0 6px 24px rgba(0,0,0,.35);
         }
-        *{margin:0;padding:0;box-sizing:border-box;}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         body{
             font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
             background:var(--bg);color:var(--text);
             transition:background var(--transition),color var(--transition);
-            display:flex;flex-direction:column;min-height:100vh;
+            min-height:100vh;display:flex;flex-direction:column;line-height:1.6;
         }
+        a{color:var(--accent);text-decoration:none}
+        /* ========== 顶部导航 ========== */
         header{
             background:var(--bg-soft);border-bottom:1px solid var(--border);
-            padding:12px 24px;position:sticky;top:0;z-index:1000;
+            padding:0 20px;position:sticky;top:0;z-index:1000;
+            display:flex;align-items:center;justify-content:space-between;height:56px;
         }
-        nav{display:flex;gap:24px;align-items:center;font-weight:600;}
-        nav a{color:var(--text-soft);text-decoration:none;font-size:14px;}
-        nav a.active{color:var(--accent);}
-        main{flex:1;max-width:800px;width:100%;margin:40px auto;padding:0 20px;}
-        section{display:none;}
-        section.active{display:block;animation:fadeIn .4s;}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
-        /* Memos 卡片 */
+        .logo{font-weight:700;font-size:18px;color:var(--accent);letter-spacing:.6px}
+        nav{display:flex;gap:24px}
+        nav a{color:var(--text-soft);font-size:14px;font-weight:600;position:relative}
+        nav a.active{color:var(--accent)}
+        nav a::after{
+            content:'';position:absolute;left:0;bottom:-6px;width:0;height:2px;
+            background:var(--accent);transition:width var(--transition)
+        }
+        nav a.active::after{width:100%}
+
+        /* —— 折叠按钮 —— */
+        .menu-toggle{
+            display:none;flex-direction:column;gap:5px;width:22px;cursor:pointer}
+        .menu-toggle span{
+            height:2px;background:var(--text-soft);border-radius:2px;
+            transition:transform var(--transition),opacity var(--transition)}
+        .menu-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+        .menu-toggle.open span:nth-child(2){opacity:0}
+        .menu-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+        /* 移动端折叠导航 */
+        @media(max-width:768px){
+            nav{position:absolute;top:56px;right:0;width:200px;flex-direction:column;
+                padding:16px 0;background:var(--bg-soft);border-left:1px solid var(--border);
+                box-shadow:var(--shadow);transform:translateX(100%);transition:transform var(--transition)}
+            nav.open{transform:translateX(0)}
+            nav a{padding:10px 20px}
+            .menu-toggle{display:flex}
+        }
+
+        /* ========== 主内容 ========== */
+        main{flex:1;max-width:820px;width:100%;margin:40px auto;padding:0 20px}
+        section{display:none;animation:fadeIn .4s}
+        section.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+        /* —— 卡片 —— */
         .memo-card{
-            background:var(--bg-soft);
-            border:1px solid var(--border);
-            border-radius:var(--radius);
-            padding:20px;
-            margin-bottom:12px;
-            box-shadow:var(--shadow);
-            white-space:pre-wrap;
-            word-break:break-word;
-            line-height:1.6;
+            background:var(--bg-soft);border:1px solid var(--border);
+            border-radius:var(--radius);padding:20px;margin-bottom:16px;
+            box-shadow:var(--shadow);white-space:pre-wrap;word-break:break-word
         }
-        .memo-time{
-            margin-top:8px;
-            font-size:12px;
-            color:var(--text-soft);
-        }
-        .loading,
-        .error{
-            text-align:center;
-            padding:40px;
-            color:var(--text-soft);
-        }
-        .error{color:#e74c3c;}
-        /* 友链卡片 */
-        .friend-grid{display:grid;gap:20px;}
-        @media(min-width:600px){.friend-grid{grid-template-columns:repeat(2,1fr);}}
-        @media(min-width:900px){.friend-grid{grid-template-columns:repeat(4,1fr);}}
+        .memo-time{margin-top:8px;font-size:12px;color:var(--text-soft)}
+        /* 友链 */
+        .friend-grid{display:grid;gap:20px}
+        @media(min-width:600px){.friend-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(min-width:900px){.friend-grid{grid-template-columns:repeat(4,1fr)}}
         .friend-card{
-            border:1px solid var(--border);border-radius:var(--radius);
-            padding:20px;background:var(--bg-soft);display:flex;gap:12px;align-items:center;
-            transition:transform var(--transition),box-shadow var(--transition);
+            display:flex;align-items:center;gap:12px;
+            background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);
+            padding:16px;transition:transform var(--transition),box-shadow var(--transition)
         }
-        .friend-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
-        .friend-card img{width:48px;height:48px;border-radius:50%;object-fit:cover;}
-        .friend-info{flex:1;display:flex;flex-direction:column;}
-        .friend-name{font-weight:600;color:var(--accent);}
-        .friend-desc{font-size:13px;color:var(--text-soft);}
+        .friend-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+        .friend-card img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+        .friend-name{font-weight:600;color:var(--accent)}
+        .friend-desc{font-size:13px;color:var(--text-soft)}
+
         /* 代码块 */
         pre{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);
-            padding:16px;overflow:auto;font-size:14px;}
-        /* 浮动主题按钮 */
+            padding:16px;overflow:auto;font-size:14px}
+
+        /* —— 浮动主题按钮 —— */
         .theme-float{
-            position:fixed;bottom:24px;right:24px;
-            width:48px;height:48px;border-radius:50%;
-            background:var(--accent);color:#fff;border:none;cursor:pointer;
-            display:flex;align-items:center;justify-content:center;font-size:20px;
-            box-shadow:var(--shadow);transition:transform var(--transition);
+            position:fixed;bottom:24px;right:24px;width:48px;height:48px;
+            border-radius:50%;background:var(--accent);color:#fff;border:none;
+            box-shadow:var(--shadow);cursor:pointer;font-size:20px;
+            transition:transform var(--transition),background var(--transition)
         }
-        .theme-float:hover{transform:scale(1.1);}
+        .theme-float:hover{transform:scale(1.1)}
+
+        /* ↑新增↑ —— 直达顶部按钮 —— */
+        .to-top{
+            position:fixed;bottom:86px;right:24px;width:48px;height:48px;
+            border-radius:50%;background:var(--bg-soft);border:1px solid var(--border);
+            box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;
+            transition:transform var(--transition),background var(--transition),opacity var(--transition);
+            opacity:.8;
+        }
+        .to-top:hover{transform:scale(1.1);opacity:1}
+        .to-top svg{width:24px;height:24px}
+        [data-theme="dark"] .to-top svg{fill:#fff}  /* 深色模式图标白色 */
+        .to-top svg{fill:#000}                       /* 浅色模式图标黑色 */
+        /* ↑新增↑ */
+
         /* 页脚 */
         footer{
             text-align:center;font-size:13px;color:var(--text-soft);
-            padding:40px 20px;border-top:1px solid var(--border);
+            padding:40px 20px;border-top:1px solid var(--border)
         }
-        footer a{color:var(--accent);margin:0 8px;text-decoration:none;}
     </style>
 
     <!-- Memos 额外样式 -->
@@ -112,19 +143,22 @@
     <link rel="stylesheet" href="https://static.314926.xyz/css/custom/memos-custom.css">
     <link rel="stylesheet" href="https://static.314926.xyz/css/custom/app.css">
 </head>
-
 <body>
-    <!-- 顶部导航 -->
+    <!-- ===== 顶部导航 ===== -->
     <header>
-        <nav>
+        <div class="logo">喵落阁</div>
+        <nav id="main-nav">
             <a href="#" class="nav-link active" data-page="home">首页</a>
             <a href="#" class="nav-link" data-page="memos">Memos</a>
             <a href="#" class="nav-link" data-page="friends">友链</a>
         </nav>
+        <div class="menu-toggle" id="menu-toggle">
+            <span></span><span></span><span></span>
+        </div>
     </header>
 
     <main>
-        <!-- 首页 / 朋友圈 -->
+        <!-- 首页 -->
         <section id="page-home" class="active">
             <div id="friend-circle-lite-root"></div>
             <div class="giscus-container">
@@ -141,31 +175,27 @@
                         data-theme="light"
                         data-lang="zh-CN"
                         data-loading="lazy"
-                        crossorigin="anonymous"
-                        async>
+                        crossorigin="anonymous" async>
                 </script>
             </div>
         </section>
 
-        <!-- Memos（独立页面写法，完全替换） -->
+        <!-- Memos 页 -->
         <section id="page-memos">
             <main id="main" class="container py-10">
                 <div id="memos" class="memos"></div>
             </main>
 
-            <!-- 全局配置 -->
             <script>
-                window.memos = {
-                    host: 'https://memos.050815.xyz',
-                    limit: '10',
-                    creatorId: '1',
-                    domId: '#memos',
-                    username: 'kemiao',
-                    name: '克喵爱吃卤面',
+                window.memos={
+                    host:'https://memos.050815.xyz',
+                    limit:'10',
+                    creatorId:'1',
+                    domId:'#memos',
+                    username:'kemiao',
+                    name:'克喵爱吃卤面'
                 };
             </script>
-
-            <!-- 外部脚本（按依赖顺序） -->
             <script src="https://memos.314926.xyz/memos/lazyload.min.js"></script>
             <script src="https://memos.314926.xyz/memos/marked.min.js"></script>
             <script src="https://memos.314926.xyz/memos/view-image.min.js"></script>
@@ -173,33 +203,31 @@
             <script src="https://memos.314926.xyz/memos/moment.twitter.js"></script>
             <script src="https://memos.314926.xyz/memos/highlight.min.js"></script>
             <script src="https://static.314926.xyz/js/memos/main.js"></script>
-
-            <!-- 初始化脚本 -->
             <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    setTimeout(() => {
-                        if (typeof hljs !== 'undefined') hljs.highlightAll();
-                        document.querySelectorAll('.memo').forEach(el => {
-                            el.classList.add('bg-white', 'dark:bg-gray-800', 'p-4', 'rounded-lg');
+                document.addEventListener('DOMContentLoaded',()=>{
+                    setTimeout(()=>{
+                        if(typeof hljs!=='undefined') hljs.highlightAll();
+                        document.querySelectorAll('.memo').forEach(el=>{
+                            el.classList.add('bg-white','dark:bg-gray-800','p-4','rounded-lg');
                         });
-                    }, 500);
+                    },500);
                 });
             </script>
         </section>
 
-        <!-- 友链 -->
+        <!-- 友链页 -->
         <section id="page-friends">
-            <h2 style="margin-bottom:20px;">小伙伴们</h2>
+            <h2 style="margin-bottom:20px;font-size:22px">小伙伴们</h2>
             <div class="friend-grid" id="friends-show"></div>
 
-            <h3 style="margin:40px 0 12px;">申请须知</h3>
-            <ul style="padding-left:20px;font-size:15px;line-height:1.8;color:var(--text-soft);">
+            <h3 style="margin:40px 0 12px;font-size:18px">申请须知</h3>
+            <ul style="padding-left:20px;font-size:15px;color:var(--text-soft);line-height:1.8">
                 <li>站点可正常访问，内容健康</li>
                 <li>半年内无失联，更新规律</li>
                 <li>互换友链后请保持至少半年</li>
             </ul>
 
-            <h3 style="margin:40px 0 12px;">我的信息</h3>
+            <h3 style="margin:40px 0 12px;font-size:18px">我的信息</h3>
             <pre><code>{
   "name": "喵落阁",
   "desc": "愿你看清一切真相后，依旧热爱你的家人和朋友。",
@@ -209,48 +237,67 @@
         </section>
     </main>
 
+    <!-- ↑新增↑ 直达顶部按钮 -->
+    <button class="to-top" id="toTop" title="回到顶部">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <g fill="none" fill-rule="evenodd">
+                <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
+                <path fill="currentColor" d="M10.94 7.94a1.5 1.5 0 0 1 2.12 0l5.658 5.656a1.5 1.5 0 1 1-2.122 2.121L12 11.122l-4.596 4.596a1.5 1.5 0 1 1-2.122-2.12z"/>
+            </g>
+        </svg>
+    </button>
+    <!-- ↑新增↑ -->
+
     <!-- 浮动主题按钮 -->
     <button class="theme-float" onclick="toggleTheme()" title="切换主题">🌗</button>
 
-    <!-- 页脚 -->
     <footer>
         <a href="/rss.xml">RSS</a> ·
         <a href="https://github.com/Kemeow815" target="_blank">GitHub</a> ·
         <a href="mailto:me@mail.kemeow.top">Email</a><br/>
-        © 2025 克喵爱吃卤面 · <a href="https://icp.gov.moe/?keyword=20250530" target="_blank" rel="noopener noreferrer">萌ICP备20250530号</a>
+        © 2025 克喵爱吃卤面 · <a href="https://icp.gov.moe/?keyword=20250530" target="_blank" rel="noopener">萌ICP备20250530号</a>
     </footer>
 
-    <!-- 逻辑脚本 -->
+    <!-- ===== 逻辑脚本 ===== -->
     <script>
-        /* ---------- 路由切换 ---------- */
-        const links  = document.querySelectorAll('.nav-link');
-        const pages  = document.querySelectorAll('section');
-        links.forEach(el=>el.addEventListener('click', e=>{
+        /* ---------- 路由 ---------- */
+        const links=document.querySelectorAll('.nav-link');
+        const pages=document.querySelectorAll('section');
+        links.forEach(el=>el.addEventListener('click',e=>{
             e.preventDefault();
-            const id = el.dataset.page;
-            links.forEach(l=>l.classList.toggle('active', l===el));
-            pages.forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
+            const id=el.dataset.page;
+            links.forEach(l=>l.classList.toggle('active',l===el));
+            pages.forEach(p=>p.classList.toggle('active',p.id==='page-'+id));
+            document.getElementById('main-nav').classList.remove('open');
+            document.getElementById('menu-toggle').classList.remove('open');
         }));
+
+        /* ---------- 折叠菜单 ---------- */
+        document.getElementById('menu-toggle').addEventListener('click',()=>{
+            document.getElementById('main-nav').classList.toggle('open');
+            document.getElementById('menu-toggle').classList.toggle('open');
+        });
 
         /* ---------- 主题 ---------- */
         function toggleTheme(){
-            const html = document.documentElement;
-            const dark = html.getAttribute('data-theme')==='dark';
-            const next = dark?'light':'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            /* giscus 同步 */
-            const g = document.querySelector('iframe.giscus-frame');
-            if(g) g.contentWindow.postMessage({giscus:{setConfig:{theme:next}}}, 'https://giscus.app');
+            const html=document.documentElement;
+            const dark=html.getAttribute('data-theme')==='dark';
+            const next=dark?'light':'dark';
+            html.setAttribute('data-theme',next);
+            localStorage.setItem('theme',next);
+            const g=document.querySelector('iframe.giscus-frame');
+            if(g) g.contentWindow.postMessage({giscus:{setConfig:{theme:next}}},'https://giscus.app');
         }
-        (()=>{
-            const t = localStorage.getItem('theme')||'light';
-            document.documentElement.setAttribute('data-theme', t);
-        })();
+        (()=>{const t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t)})();
+
+        /* ---------- 直达顶部 ---------- */
+        const toTopBtn = document.getElementById('toTop');
+        toTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        /* ↑新增↑ */
 
         /* ---------- Friend Circle Lite ---------- */
         (()=>{
-            if(typeof window==='undefined')return;
+            if(typeof window==='undefined') return;
             window.UserConfig={
                 private_api_url:'https://fc.314926.xyz/',
                 page_turning_number:24,
@@ -262,7 +309,6 @@
             document.head.appendChild(css);
             const js=document.createElement('script');
             js.src='https://fastly.jsdelivr.net/gh/willow-god/Friend-Circle-Lite/main/fclite.min.js';
-            js.onload=()=>console.warn('Friend Circle Lite loaded');
             document.body.appendChild(js);
             window.fclResources={css,js};
         })();
@@ -274,8 +320,8 @@
             {name:'张洪Heo',desc:'分享设计与科技生活',url:'https://blog.zhheo.com/',avatar:'https://img.zhheo.com/i/67d8fa75943e4.webp'},
             {name:'wallleap',desc:'Luwang\'s blog',url:'https://myblog.wallleap.cn',avatar:'https://img.314926.xyz/images/2025/07/09/wallleap.webp'}
         ];
-        const friendsHtml=friendsData.map(f=>`
-            <a class="friend-card" href="${f.url}" target="_blank">
+        document.getElementById('friends-show').innerHTML=friendsData.map(f=>`
+            <a class="friend-card" href="${f.url}" target="_blank" rel="noopener">
                 <img src="${f.avatar}" alt="${f.name}">
                 <div class="friend-info">
                     <div class="friend-name">${f.name}</div>
@@ -283,7 +329,6 @@
                 </div>
             </a>
         `).join('');
-        document.getElementById('friends-show').innerHTML=friendsHtml;
     </script>
 </body>
 </html>
