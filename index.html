@@ -70,7 +70,9 @@
         @media(max-width:768px){
             nav{position:absolute;top:56px;right:0;width:200px;flex-direction:column;
                 padding:16px 0;background:var(--bg-soft);border-left:1px solid var(--border);
-                box-shadow:var(--shadow);transform:translateX(100%);transition:transform var(--transition)}
+                box-shadow:var(--shadow);transform:translateX(100%);transition:transform var(--transition);
+                z-index:9999; /* 新增：确保菜单在最上层 */
+            }
             nav.open{transform:translateX(0)}
             nav a{padding:10px 20px}
             .menu-toggle{display:flex}
