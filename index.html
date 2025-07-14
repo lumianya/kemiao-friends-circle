@@ -66,12 +66,13 @@
         .menu-toggle.open span:nth-child(2){opacity:0}
         .menu-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-        /* 移动端折叠导航 */
+        /* 移动端折叠导航（左侧滑出） */
         @media(max-width:768px){
-            nav{position:absolute;top:56px;right:0;width:200px;flex-direction:column;
-                padding:16px 0;background:var(--bg-soft);border-left:1px solid var(--border);
-                box-shadow:var(--shadow);transform:translateX(100%);transition:transform var(--transition);
-                z-index:9999; /* 新增：确保菜单在最上层 */
+            nav{
+                position:absolute;top:56px;left:0;width:200px;flex-direction:column;
+                padding:16px 0;background:var(--bg-soft);border-right:1px solid var(--border);
+                box-shadow:var(--shadow);transform:translateX(-100%);transition:transform var(--transition);
+                z-index:9999;
             }
             nav.open{transform:translateX(0)}
             nav a{padding:10px 20px}
@@ -128,8 +129,8 @@
         }
         .to-top:hover{transform:scale(1.1);opacity:1}
         .to-top svg{width:24px;height:24px}
-        [data-theme="dark"] .to-top svg{fill:#fff}  /* 深色模式图标白色 */
-        .to-top svg{fill:#000}                       /* 浅色模式图标黑色 */
+        [data-theme="dark"] .to-top svg{fill:#fff}
+        .to-top svg{fill:#000}
         /* ↑新增↑ */
 
         /* 页脚 */
